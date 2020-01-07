@@ -12,34 +12,52 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  Future<List<Artist>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = nativeLib.getAllArtists();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Artists'),
       ),
-      body: FutureBuilder<List<Artist>>(
-        future: nativeLib.getAllArtists(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ArtistList(
-              artists: snapshot.data,
-              onSelect: (artist) {
-                Navigator.pushNamed(context, '/albums');
-                print(artist.name);
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: FutureBuilder<List<Artist>>(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ArtistList(
+                artists: snapshot.data,
+                onSelect: (artist) {
+                  Navigator.pushNamed(context, '/albums');
+                  print(artist.name);
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
       ),
     );
+  }
+
+  Future<void> _refresh() {
+    setState(() {
+      _future = nativeLib.getAllArtists();
+    });
+    return _future;
   }
 }
