@@ -213,12 +213,14 @@ class Album extends DataClass implements Insertable<Album> {
   final String id;
   final String artistId;
   final String name;
+  final String image;
   final int songs;
   final int year;
   Album(
       {@required this.id,
       @required this.artistId,
       this.name,
+      this.image,
       @required this.songs,
       this.year});
   factory Album.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -231,6 +233,8 @@ class Album extends DataClass implements Insertable<Album> {
       artistId: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}artist_id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      image:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}image']),
       songs: intType.mapFromDatabaseResponse(data['${effectivePrefix}songs']),
       year: intType.mapFromDatabaseResponse(data['${effectivePrefix}year']),
     );
@@ -242,6 +246,7 @@ class Album extends DataClass implements Insertable<Album> {
       id: serializer.fromJson<String>(json['id']),
       artistId: serializer.fromJson<String>(json['artistId']),
       name: serializer.fromJson<String>(json['name']),
+      image: serializer.fromJson<String>(json['image']),
       songs: serializer.fromJson<int>(json['songs']),
       year: serializer.fromJson<int>(json['year']),
     );
@@ -253,6 +258,7 @@ class Album extends DataClass implements Insertable<Album> {
       'id': serializer.toJson<String>(id),
       'artistId': serializer.toJson<String>(artistId),
       'name': serializer.toJson<String>(name),
+      'image': serializer.toJson<String>(image),
       'songs': serializer.toJson<int>(songs),
       'year': serializer.toJson<int>(year),
     };
@@ -266,6 +272,8 @@ class Album extends DataClass implements Insertable<Album> {
           ? const Value.absent()
           : Value(artistId),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      image:
+          image == null && nullToAbsent ? const Value.absent() : Value(image),
       songs:
           songs == null && nullToAbsent ? const Value.absent() : Value(songs),
       year: year == null && nullToAbsent ? const Value.absent() : Value(year),
@@ -273,11 +281,17 @@ class Album extends DataClass implements Insertable<Album> {
   }
 
   Album copyWith(
-          {String id, String artistId, String name, int songs, int year}) =>
+          {String id,
+          String artistId,
+          String name,
+          String image,
+          int songs,
+          int year}) =>
       Album(
         id: id ?? this.id,
         artistId: artistId ?? this.artistId,
         name: name ?? this.name,
+        image: image ?? this.image,
         songs: songs ?? this.songs,
         year: year ?? this.year,
       );
@@ -287,6 +301,7 @@ class Album extends DataClass implements Insertable<Album> {
           ..write('id: $id, ')
           ..write('artistId: $artistId, ')
           ..write('name: $name, ')
+          ..write('image: $image, ')
           ..write('songs: $songs, ')
           ..write('year: $year')
           ..write(')'))
@@ -296,8 +311,10 @@ class Album extends DataClass implements Insertable<Album> {
   @override
   int get hashCode => $mrjf($mrjc(
       id.hashCode,
-      $mrjc(artistId.hashCode,
-          $mrjc(name.hashCode, $mrjc(songs.hashCode, year.hashCode)))));
+      $mrjc(
+          artistId.hashCode,
+          $mrjc(name.hashCode,
+              $mrjc(image.hashCode, $mrjc(songs.hashCode, year.hashCode))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -305,6 +322,7 @@ class Album extends DataClass implements Insertable<Album> {
           other.id == this.id &&
           other.artistId == this.artistId &&
           other.name == this.name &&
+          other.image == this.image &&
           other.songs == this.songs &&
           other.year == this.year);
 }
@@ -313,12 +331,14 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
   final Value<String> id;
   final Value<String> artistId;
   final Value<String> name;
+  final Value<String> image;
   final Value<int> songs;
   final Value<int> year;
   const AlbumsCompanion({
     this.id = const Value.absent(),
     this.artistId = const Value.absent(),
     this.name = const Value.absent(),
+    this.image = const Value.absent(),
     this.songs = const Value.absent(),
     this.year = const Value.absent(),
   });
@@ -326,6 +346,7 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     @required String id,
     @required String artistId,
     this.name = const Value.absent(),
+    this.image = const Value.absent(),
     @required int songs,
     this.year = const Value.absent(),
   })  : id = Value(id),
@@ -335,12 +356,14 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
       {Value<String> id,
       Value<String> artistId,
       Value<String> name,
+      Value<String> image,
       Value<int> songs,
       Value<int> year}) {
     return AlbumsCompanion(
       id: id ?? this.id,
       artistId: artistId ?? this.artistId,
       name: name ?? this.name,
+      image: image ?? this.image,
       songs: songs ?? this.songs,
       year: year ?? this.year,
     );
@@ -387,6 +410,18 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
     );
   }
 
+  final VerificationMeta _imageMeta = const VerificationMeta('image');
+  GeneratedTextColumn _image;
+  @override
+  GeneratedTextColumn get image => _image ??= _constructImage();
+  GeneratedTextColumn _constructImage() {
+    return GeneratedTextColumn(
+      'image',
+      $tableName,
+      true,
+    );
+  }
+
   final VerificationMeta _songsMeta = const VerificationMeta('songs');
   GeneratedIntColumn _songs;
   @override
@@ -412,7 +447,8 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, artistId, name, songs, year];
+  List<GeneratedColumn> get $columns =>
+      [id, artistId, name, image, songs, year];
   @override
   $AlbumsTable get asDslTable => this;
   @override
@@ -437,6 +473,10 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
     if (d.name.present) {
       context.handle(
           _nameMeta, name.isAcceptableValue(d.name.value, _nameMeta));
+    }
+    if (d.image.present) {
+      context.handle(
+          _imageMeta, image.isAcceptableValue(d.image.value, _imageMeta));
     }
     if (d.songs.present) {
       context.handle(
@@ -470,6 +510,9 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
     }
     if (d.name.present) {
       map['name'] = Variable<String, StringType>(d.name.value);
+    }
+    if (d.image.present) {
+      map['image'] = Variable<String, StringType>(d.image.value);
     }
     if (d.songs.present) {
       map['songs'] = Variable<int, IntType>(d.songs.value);

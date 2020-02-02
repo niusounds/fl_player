@@ -31,6 +31,9 @@ class AlbumsRepository {
           year: album.year != null
               ? Value(int.parse(album.year))
               : const Value.absent(),
+          image: album.albumArt != null
+              ? Value(album.albumArt)
+              : const Value.absent(),
         ));
       }
     }

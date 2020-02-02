@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:fl_player/db.dart';
 import 'package:flutter/material.dart';
 
-class AlbumList extends StatefulWidget {
+class AlbumList extends StatelessWidget {
   const AlbumList({
     Key key,
     @required this.albums,
@@ -12,34 +14,57 @@ class AlbumList extends StatefulWidget {
   final ValueChanged<Album> onSelect;
 
   @override
-  _AlbumListState createState() => _AlbumListState();
-}
-
-class _AlbumListState extends State<AlbumList> {
-  List<Album> _sorted;
-
-  @override
-  void initState() {
-    super.initState();
-    _sorted = widget.albums;
-    // _sorted = List.from(widget.albums, growable: false)
-    //   ..sort((a, b) => a.year.compareTo(b.year));
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: _sorted.length,
+      itemCount: albums.length,
       itemBuilder: (context, index) {
-        final album = _sorted[index];
+        final album = albums[index];
         return ListTile(
-          leading: Image.network('https://picsum.photos/320/320'),
+          leading: album.image != null
+              ? Image.file(File(album.image))
+              : const AlbumNoImage(),
           title: Text(album.name),
           subtitle: Text(album.yearDisplay),
           trailing: Text('54:41'),
-          onTap: () => widget.onSelect(album),
+          onTap: () => onSelect(album),
         );
       },
+    );
+  }
+}
+
+class AlbumNoImage extends StatelessWidget {
+  const AlbumNoImage({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 72,
+      height: 72,
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        alignment: Alignment.center,
+        child: Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            shape: BoxShape.circle,
+          ),
+        ),
+      ),
     );
   }
 }

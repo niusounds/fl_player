@@ -21,6 +21,7 @@ class Albums extends Table {
   TextColumn get id => text()();
   TextColumn get artistId => text()();
   TextColumn get name => text().nullable()();
+  TextColumn get image => text().nullable()();
   IntColumn get songs => integer()();
   IntColumn get year => integer().nullable()();
 }
