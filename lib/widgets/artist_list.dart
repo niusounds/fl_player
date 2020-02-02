@@ -1,8 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
-
-import '../data/artist.dart';
+import 'package:fl_player/db.dart';
 
 class ArtistList extends StatefulWidget {
   const ArtistList({
@@ -67,7 +66,7 @@ class _ArtistListState extends State<ArtistList> {
               tiles: artists.map(
                 (artist) => ListTile(
                   title: Text(artist.name),
-                  subtitle: Text('${artist.albumCount} albums'),
+                  // subtitle: Text('${artist.albumCount} albums'),
                   onTap: () => widget.onSelect(artist),
                 ),
               ),

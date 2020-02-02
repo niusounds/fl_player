@@ -1,8 +1,8 @@
-import 'package:fl_player/data/artist.dart';
+import 'package:fl_player/db.dart';
+import 'package:fl_player/repository.dart';
+import 'package:fl_player/widgets.dart';
 import 'package:flutter/material.dart';
-
-import '../datasource/native_library.dart' as nativeLib;
-import '../widgets/artist_list.dart';
+import 'package:provider/provider.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage();
@@ -12,55 +12,44 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  Future<List<Artist>> _future;
-
-  @override
-  void initState() {
-    super.initState();
-    _future = nativeLib.getAllArtists();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Artists'),
+        title: const Text('Artists'),
       ),
-      body: RefreshIndicator(
-        onRefresh: _refresh,
-        child: FutureBuilder<List<Artist>>(
-          future: _future,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ArtistList(
-                artists: snapshot.data,
-                onSelect: (artist) {
-                  Navigator.pushNamed(
-                    context,
-                    '/albums',
-                    arguments: artist.name,
+      body: Consumer<ArtistsRepository>(
+        builder: (context, repo, _) {
+          return StreamProvider.value(
+            value: repo.allArtists,
+            child: Consumer<List<Artist>>(
+              builder: (context, artists, _) {
+                if (artists == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-                },
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () => repo.refresh(),
+                  child: ArtistList(
+                    artists: artists,
+                    onSelect: _toAlbumsPage,
+                  ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
 
-  Future<void> _refresh() {
-    setState(() {
-      _future = nativeLib.getAllArtists();
-    });
-    return _future;
+  void _toAlbumsPage(Artist artist) {
+    Navigator.pushNamed(
+      context,
+      '/albums',
+      arguments: artist,
+    );
   }
 }

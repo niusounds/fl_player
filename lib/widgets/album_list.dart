@@ -1,6 +1,5 @@
+import 'package:fl_player/db.dart';
 import 'package:flutter/material.dart';
-
-import '../data.dart';
 
 class AlbumList extends StatefulWidget {
   const AlbumList({
@@ -36,7 +35,7 @@ class _AlbumListState extends State<AlbumList> {
         return ListTile(
           leading: Image.network('https://picsum.photos/320/320'),
           title: Text(album.name),
-          subtitle: Text('${album.year}'),
+          // subtitle: album.year != null ? Text('${album.year}') : null,
           trailing: Text('54:41'),
         );
       },

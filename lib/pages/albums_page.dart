@@ -1,58 +1,51 @@
+import 'package:fl_player/db.dart';
+import 'package:fl_player/repository.dart';
+import 'package:fl_player/widgets.dart';
 import 'package:flutter/material.dart';
-
-import '../data/album.dart';
-import '../datasource/native_library.dart' as nativeLib;
-import '../widgets/album_list.dart';
+import 'package:provider/provider.dart';
 
 class AlbumsPage extends StatefulWidget {
   const AlbumsPage({
     Key key,
-    @required this.artistName,
-  })  : assert(artistName != null),
+    @required this.artist,
+  })  : assert(artist != null),
         super(key: key);
 
-  final String artistName;
+  final Artist artist;
 
   @override
   _AlbumsPageState createState() => _AlbumsPageState();
 }
 
 class _AlbumsPageState extends State<AlbumsPage> {
-  Future<List<Album>> _future;
-
-  @override
-  void initState() {
-    super.initState();
-    _future = nativeLib.getAlbumsForArtist(
-      artistName: widget.artistName,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Albums'),
+        title: const Text('Albums'),
       ),
-      body: FutureBuilder<List<Album>>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return AlbumList(
-              albums: snapshot.data,
-              onSelect: (album) {
-                print(album.name);
+      body: Consumer<AlbumsRepository>(
+        builder: (context, repo, _) {
+          return StreamProvider.value(
+            value: repo.albumForArtist(widget.artist),
+            child: Consumer<List<Album>>(
+              builder: (context, albums, _) {
+                if (albums == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () => repo.refresh(widget.artist),
+                  child: AlbumList(
+                    albums: albums,
+                    onSelect: (album) {},
+                  ),
+                );
               },
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+            ),
+          );
         },
       ),
     );

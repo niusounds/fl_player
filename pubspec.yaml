@@ -3,18 +3,25 @@ description: Flutter based audio player.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^0.1.2
   sticky_headers: ^0.1.8
-  flutter_sticky_header: "^0.3.4"
+  flutter_sticky_header: '^0.3.4'
+  provider: ^4.0.0
+  moor: # use the latest version
+  moor_ffi: # use the latest version
+  path_provider: # use the latest version
+  flutter_audio_query: ^0.3.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  moor_generator: # use the latest version
+  build_runner:
 
 flutter:
   uses-material-design: true
