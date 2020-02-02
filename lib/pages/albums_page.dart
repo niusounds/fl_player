@@ -40,7 +40,7 @@ class _AlbumsPageState extends State<AlbumsPage> {
                   onRefresh: () => repo.refresh(widget.artist),
                   child: AlbumList(
                     albums: albums,
-                    onSelect: (album) {},
+                    onSelect: _toPlayer,
                   ),
                 );
               },
@@ -48,6 +48,14 @@ class _AlbumsPageState extends State<AlbumsPage> {
           );
         },
       ),
+    );
+  }
+
+  void _toPlayer(Album album) {
+    Navigator.pushNamed(
+      context,
+      '/player',
+      arguments: album,
     );
   }
 }

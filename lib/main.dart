@@ -1,5 +1,7 @@
 import 'package:fl_player/db.dart';
+import 'package:fl_player/pages/player_page.dart';
 import 'package:fl_player/repository.dart';
+import 'package:fl_player/repository/songs_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +26,12 @@ void main() {
             audioQuery: FlutterAudioQuery(),
           ),
         ),
+        Provider<SongsRepository>(
+          create: (context) => SongsRepository(
+            dao: Provider.of<MusicDatabase>(context, listen: false).songsDao,
+            audioQuery: FlutterAudioQuery(),
+          ),
+        ),
       ],
       child: FlPlayerApp(),
     ),
@@ -45,6 +53,11 @@ class FlPlayerApp extends StatelessWidget {
             artist: ModalRoute.of(context).settings.arguments,
           );
         },
+        '/player': (context) {
+          return PlayerPage(
+            album: ModalRoute.of(context).settings.arguments,
+          );
+        }
       },
     );
   }

@@ -9,7 +9,7 @@ class AlbumList extends StatefulWidget {
   }) : super(key: key);
 
   final List<Album> albums;
-  final ValueChanged<Artist> onSelect;
+  final ValueChanged<Album> onSelect;
 
   @override
   _AlbumListState createState() => _AlbumListState();
@@ -35,10 +35,15 @@ class _AlbumListState extends State<AlbumList> {
         return ListTile(
           leading: Image.network('https://picsum.photos/320/320'),
           title: Text(album.name),
-          // subtitle: album.year != null ? Text('${album.year}') : null,
+          subtitle: Text(album.yearDisplay),
           trailing: Text('54:41'),
+          onTap: () => widget.onSelect(album),
         );
       },
     );
   }
+}
+
+extension AlbumYear on Album {
+  String get yearDisplay => year != null ? '$year年' : '';
 }

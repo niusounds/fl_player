@@ -2,6 +2,10 @@ import 'package:fl_player/db.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:moor/moor.dart';
 
+extension AlbumYear on AlbumInfo {
+  String get year => firstYear ?? lastYear;
+}
+
 class AlbumsRepository {
   AlbumsRepository({
     @required this.dao,
@@ -22,7 +26,11 @@ class AlbumsRepository {
         await dao.insert(AlbumsCompanion.insert(
           id: album.id,
           artistId: artist.id,
+          songs: int.parse(album.numberOfSongs),
           name: album.title != null ? Value(album.title) : const Value.absent(),
+          year: album.year != null
+              ? Value(int.parse(album.year))
+              : const Value.absent(),
         ));
       }
     }
