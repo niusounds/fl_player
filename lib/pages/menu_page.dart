@@ -35,8 +35,11 @@ class _MenuPageState extends State<MenuPage> {
               return ArtistList(
                 artists: snapshot.data,
                 onSelect: (artist) {
-                  Navigator.pushNamed(context, '/albums');
-                  print(artist.name);
+                  Navigator.pushNamed(
+                    context,
+                    '/albums',
+                    arguments: artist.name,
+                  );
                 },
               );
             } else if (snapshot.hasError) {

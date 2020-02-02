@@ -22,8 +22,9 @@ class _AlbumListState extends State<AlbumList> {
   @override
   void initState() {
     super.initState();
-    _sorted = List.from(widget.albums, growable: false)
-      ..sort((a, b) => a.year.compareTo(b.year));
+    _sorted = widget.albums;
+    // _sorted = List.from(widget.albums, growable: false)
+    //   ..sort((a, b) => a.year.compareTo(b.year));
   }
 
   @override

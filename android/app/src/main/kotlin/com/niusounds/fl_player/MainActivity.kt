@@ -40,6 +40,22 @@ class MainActivity : FlutterActivity() {
                         result.success(NativeLibrary.getAllArtists(this))
                     }
                 }
+                "getAlbumsForArtist" -> {
+                    val artistName = methodCall.argument<String>("artistName")
+                    if (artistName == null) {
+                        result.error("invalid argument", "artistName is required", null)
+                    } else {
+                        result.success(NativeLibrary.getAlbumsForArtist(this, artistName))
+                    }
+                }
+                "getSongsForAlbum" -> {
+                    val albumId = methodCall.argument<Int>("albumId")
+                    if (albumId == null) {
+                        result.error("invalid argument", "albumId is required", null)
+                    } else {
+                        result.success(NativeLibrary.getSongsForAlbum(this, albumId))
+                    }
+                }
                 else -> {
                     result.notImplemented()
                 }

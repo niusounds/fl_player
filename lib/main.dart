@@ -14,7 +14,11 @@ class FlPlayerApp extends StatelessWidget {
       theme: ThemeData.dark(),
       routes: {
         '/': (context) => const MenuPage(),
-        '/albums': (context) => const AlbumsPage(),
+        '/albums': (context) {
+          return AlbumsPage(
+            artistName: ModalRoute.of(context).settings.arguments,
+          );
+        },
       },
     );
   }

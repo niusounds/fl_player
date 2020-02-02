@@ -14,28 +14,7 @@ object NativeLibrary {
         ), null, null, MediaStore.Audio.Artists.ARTIST + " ASC")
 
         cursor?.use {
-            val result = mutableListOf<Map<String, Any>>()
-            while (cursor.moveToNext()) {
-                val map = mutableMapOf<String, Any>()
-                for (i in 0..cursor.columnCount) {
-                    when (cursor.getType(i)) {
-                        Cursor.FIELD_TYPE_FLOAT -> {
-                            map[cursor.getColumnName(i)] = cursor.getFloat(i)
-                        }
-                        Cursor.FIELD_TYPE_BLOB -> {
-                            map[cursor.getColumnName(i)] = cursor.getBlob(i)
-                        }
-                        Cursor.FIELD_TYPE_INTEGER -> {
-                            map[cursor.getColumnName(i)] = cursor.getInt(i)
-                        }
-                        Cursor.FIELD_TYPE_STRING -> {
-                            map[cursor.getColumnName(i)] = cursor.getString(i)
-                        }
-                    }
-                }
-                result.add(map)
-            }
-            return result
+            return it.asMap()
         }
 
         return emptyList()
@@ -44,37 +23,71 @@ object NativeLibrary {
     fun getAlbumsForArtist(context: Context, artist: String): List<Map<String, Any>> {
         val cursor: Cursor? = context.contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(
                 MediaStore.Audio.Albums._ID,
-                MediaStore.Audio.Albums.ARTIST,
-                MediaStore.Audio.Albums.ALBUM_ID,
+                MediaStore.Audio.Albums.ALBUM,
                 MediaStore.Audio.Albums.ALBUM_ART,
-                MediaStore.Audio.Albums.NUMBER_OF_SONGS
-        ), MediaStore.Audio.Albums.ARTIST + "=?", arrayOf(artist), MediaStore.Audio.AlbumColumns.FIRST_YEAR + " DESC")
+                MediaStore.Audio.Albums.ALBUM_ID,
+                MediaStore.Audio.Albums.NUMBER_OF_SONGS,
+                MediaStore.Audio.Albums.FIRST_YEAR,
+                MediaStore.Audio.Albums.LAST_YEAR
+        ), MediaStore.Audio.Albums.ARTIST + "=?", arrayOf(artist), MediaStore.Audio.Albums.FIRST_YEAR + " DESC")
 
         cursor?.use {
-            val result = mutableListOf<Map<String, Any>>()
-            while (cursor.moveToNext()) {
-                val map = mutableMapOf<String, Any>()
-                for (i in 0..cursor.columnCount) {
-                    when (cursor.getType(i)) {
-                        Cursor.FIELD_TYPE_FLOAT -> {
-                            map[cursor.getColumnName(i)] = cursor.getFloat(i)
-                        }
-                        Cursor.FIELD_TYPE_BLOB -> {
-                            map[cursor.getColumnName(i)] = cursor.getBlob(i)
-                        }
-                        Cursor.FIELD_TYPE_INTEGER -> {
-                            map[cursor.getColumnName(i)] = cursor.getInt(i)
-                        }
-                        Cursor.FIELD_TYPE_STRING -> {
-                            map[cursor.getColumnName(i)] = cursor.getString(i)
-                        }
-                    }
-                }
-                result.add(map)
-            }
-            return result
+            return it.asMap()
         }
 
         return emptyList()
+    }
+
+    fun getSongsForAlbum(context: Context, albumId: Int): List<Map<String, Any>> {
+        val cursor: Cursor? = context.contentResolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, arrayOf(
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.ALBUM_ID,
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.ARTIST_ID,
+                MediaStore.Audio.Media.ARTIST_KEY,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.COMPOSER,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.DATE_ADDED,
+                MediaStore.Audio.Media.DATE_MODIFIED,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.SIZE,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.TITLE_KEY,
+                MediaStore.Audio.Media.TRACK,
+                MediaStore.Audio.Media.YEAR
+        ), MediaStore.Audio.Media.ALBUM_ID + "=?", arrayOf(albumId.toString()), MediaStore.Audio.Media.TRACK + " ASC")
+
+        cursor?.use {
+            return it.asMap()
+        }
+
+        return emptyList()
+    }
+
+    private fun Cursor.asMap(): List<Map<String, Any>> {
+        val result = mutableListOf<Map<String, Any>>()
+        while (moveToNext()) {
+            val map = mutableMapOf<String, Any>()
+            for (i in 0..columnCount) {
+                when (getType(i)) {
+                    Cursor.FIELD_TYPE_FLOAT -> {
+                        map[getColumnName(i)] = getFloat(i)
+                    }
+                    Cursor.FIELD_TYPE_BLOB -> {
+                        map[getColumnName(i)] = getBlob(i)
+                    }
+                    Cursor.FIELD_TYPE_INTEGER -> {
+                        map[getColumnName(i)] = getInt(i)
+                    }
+                    Cursor.FIELD_TYPE_STRING -> {
+                        map[getColumnName(i)] = getString(i)
+                    }
+                }
+            }
+            result.add(map)
+        }
+        return result
     }
 }
