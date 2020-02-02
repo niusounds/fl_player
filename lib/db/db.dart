@@ -14,6 +14,7 @@ part 'db.g.dart';
 class Artists extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
+  TextColumn get numberOfAlbums => text().nullable()();
 }
 
 class Albums extends Table {

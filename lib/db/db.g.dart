@@ -10,7 +10,8 @@ part of 'db.dart';
 class Artist extends DataClass implements Insertable<Artist> {
   final String id;
   final String name;
-  Artist({@required this.id, @required this.name});
+  final String numberOfAlbums;
+  Artist({@required this.id, @required this.name, this.numberOfAlbums});
   factory Artist.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -18,6 +19,8 @@ class Artist extends DataClass implements Insertable<Artist> {
     return Artist(
       id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      numberOfAlbums: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}number_of_albums']),
     );
   }
   factory Artist.fromJson(Map<String, dynamic> json,
@@ -26,6 +29,7 @@ class Artist extends DataClass implements Insertable<Artist> {
     return Artist(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      numberOfAlbums: serializer.fromJson<String>(json['numberOfAlbums']),
     );
   }
   @override
@@ -34,6 +38,7 @@ class Artist extends DataClass implements Insertable<Artist> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
+      'numberOfAlbums': serializer.toJson<String>(numberOfAlbums),
     };
   }
 
@@ -42,46 +47,60 @@ class Artist extends DataClass implements Insertable<Artist> {
     return ArtistsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      numberOfAlbums: numberOfAlbums == null && nullToAbsent
+          ? const Value.absent()
+          : Value(numberOfAlbums),
     );
   }
 
-  Artist copyWith({String id, String name}) => Artist(
+  Artist copyWith({String id, String name, String numberOfAlbums}) => Artist(
         id: id ?? this.id,
         name: name ?? this.name,
+        numberOfAlbums: numberOfAlbums ?? this.numberOfAlbums,
       );
   @override
   String toString() {
     return (StringBuffer('Artist(')
           ..write('id: $id, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('numberOfAlbums: $numberOfAlbums')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, name.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(name.hashCode, numberOfAlbums.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Artist && other.id == this.id && other.name == this.name);
+      (other is Artist &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.numberOfAlbums == this.numberOfAlbums);
 }
 
 class ArtistsCompanion extends UpdateCompanion<Artist> {
   final Value<String> id;
   final Value<String> name;
+  final Value<String> numberOfAlbums;
   const ArtistsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.numberOfAlbums = const Value.absent(),
   });
   ArtistsCompanion.insert({
     @required String id,
     @required String name,
+    this.numberOfAlbums = const Value.absent(),
   })  : id = Value(id),
         name = Value(name);
-  ArtistsCompanion copyWith({Value<String> id, Value<String> name}) {
+  ArtistsCompanion copyWith(
+      {Value<String> id, Value<String> name, Value<String> numberOfAlbums}) {
     return ArtistsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      numberOfAlbums: numberOfAlbums ?? this.numberOfAlbums,
     );
   }
 }
@@ -114,8 +133,22 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
     );
   }
 
+  final VerificationMeta _numberOfAlbumsMeta =
+      const VerificationMeta('numberOfAlbums');
+  GeneratedTextColumn _numberOfAlbums;
   @override
-  List<GeneratedColumn> get $columns => [id, name];
+  GeneratedTextColumn get numberOfAlbums =>
+      _numberOfAlbums ??= _constructNumberOfAlbums();
+  GeneratedTextColumn _constructNumberOfAlbums() {
+    return GeneratedTextColumn(
+      'number_of_albums',
+      $tableName,
+      true,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, name, numberOfAlbums];
   @override
   $ArtistsTable get asDslTable => this;
   @override
@@ -137,6 +170,12 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
+    if (d.numberOfAlbums.present) {
+      context.handle(
+          _numberOfAlbumsMeta,
+          numberOfAlbums.isAcceptableValue(
+              d.numberOfAlbums.value, _numberOfAlbumsMeta));
+    }
     return context;
   }
 
@@ -156,6 +195,10 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
     }
     if (d.name.present) {
       map['name'] = Variable<String, StringType>(d.name.value);
+    }
+    if (d.numberOfAlbums.present) {
+      map['number_of_albums'] =
+          Variable<String, StringType>(d.numberOfAlbums.value);
     }
     return map;
   }

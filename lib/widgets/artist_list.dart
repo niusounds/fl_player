@@ -66,7 +66,7 @@ class _ArtistListState extends State<ArtistList> {
               tiles: artists.map(
                 (artist) => ListTile(
                   title: Text(artist.name),
-                  // subtitle: Text('${artist.albumCount} albums'),
+                  subtitle: Text('${artist.numberOfAlbums} albums'),
                   onTap: () => widget.onSelect(artist),
                 ),
               ),

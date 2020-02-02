@@ -12,6 +12,7 @@ mixin _$ArtistsDaoMixin on DatabaseAccessor<MusicDatabase> {
     return Artist(
       id: row.readString('id'),
       name: row.readString('name'),
+      numberOfAlbums: row.readString('number_of_albums'),
     );
   }
 

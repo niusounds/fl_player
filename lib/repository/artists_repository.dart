@@ -20,6 +20,9 @@ class ArtistsRepository {
         await dao.insert(ArtistsCompanion.insert(
           id: artist.id,
           name: artist.name,
+          numberOfAlbums: artist.numberOfAlbums != null
+              ? Value(artist.numberOfAlbums)
+              : const Value.absent(),
         ));
       }
     }
